@@ -1,0 +1,52 @@
+<!-- Inherit header/footer structure from base.html -->
+{% extends "base.html" %}
+
+<!-- Set page title -->
+{% block title %}TaskFlow - Login{% endblock %}
+
+{% block content %}
+<div class="form-container-wrapper">
+    <!-- Main Form Card: Stays centered with clean shadows and round borders -->
+    <div class="form-card">
+        <h2 class="form-title">Welcome Back</h2>
+        <p class="form-subtitle">Login to access your task dashboard</p>
+        
+        <!-- Login Form -->
+        <form action="{{ url_for('login') }}" method="POST" class="form-group-wrapper">
+            <!-- Email Input Field -->
+            <div class="form-field">
+                <label for="email" class="form-label">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="name@example.com" 
+                    required 
+                    class="form-input"
+                >
+            </div>
+            
+            <!-- Password Input Field -->
+            <div class="form-field">
+                <label for="password" class="form-label">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    placeholder="Enter your password" 
+                    required 
+                    class="form-input"
+                >
+            </div>
+            
+            <!-- Login Button -->
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+        </form>
+        
+        <!-- Redirect link to registration if user doesn't have an account -->
+        <div class="form-footer">
+            <p>Don't have an account? <a href="{{ url_for('register') }}" class="form-link">Register here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

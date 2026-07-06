@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Metadata defines details about the document, like character set and viewport details for responsiveness -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TaskFlow - Manage Your Tasks{% endblock %}</title>
+    
+    <!-- Link Google Font "Inter" for clean, modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Link our custom CSS file. url_for('static', filename='...') is a Flask helper to generate the correct file path -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- Header containing our main navigation bar -->
+    <header class="navbar-header">
+        <nav class="navbar container">
+            <!-- Brand Logo -->
+            <a href="{{ url_for('home') }}" class="logo">
+                <span class="logo-icon">✔</span> TaskFlow
+            </a>
+            
+            <!-- Hamburger Toggle Button for mobile responsiveness -->
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+            
+            <!-- Navigation Links -->
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item">
+                    <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+                </li>
+                <!-- If user is logged in (session holds user_id), display Dashboard and Logout -->
+                {% if session.get('user_id') %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('logout') }}" class="nav-link btn-nav btn-nav-logout">Logout</a>
+                    </li>
+                <!-- Otherwise, display Login and Register options -->
+                {% else %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('register') }}" class="nav-link btn-nav">Register</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Flash Messages Container: Displays error or success feedback messages from Flask -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages container">
+                {% for category, message in messages %}
+                    <!-- category can be 'success' (green alert) or 'error' (red alert) -->
+                    <div class="flash-alert flash-{{ category }}">
+                        <span class="flash-message">{{ message }}</span>
+                        <!-- Close button for user to dismiss the alert box -->
+                        <button class="flash-close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content Area: Child templates will inject their HTML here -->
+    <main class="main-content container">
+        {% block content %}
+        <!-- Child templates like index.html, login.html, etc., will replace this block -->
+        {% endblock %}
+    </main>
+
+    <!-- Footer containing copyright info -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 TaskFlow. All rights reserved. Designed for productivity.</p>
+        </div>
+    </footer>
+
+    <!-- Link our custom JavaScript file at the end of the body for faster page rendering -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

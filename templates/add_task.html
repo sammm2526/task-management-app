@@ -1,0 +1,73 @@
+<!-- Extends base.html tells Jinja2 to inherit the structure from our base template -->
+{% extends "base.html" %}
+
+<!-- Set a dynamic title for this specific page -->
+{% block title %}TaskFlow - Add New Task{% endblock %}
+
+{% block content %}
+<div class="form-container-wrapper">
+    <!-- Card box layout using pre-defined form-card classes -->
+    <div class="form-card">
+        <h2 class="form-title">Create New Task</h2>
+        <p class="form-subtitle">Add details to outline your new productivity task</p>
+        
+        <!-- Form action posts task details to the add_task route -->
+        <form action="{{ url_for('add_task') }}" method="POST" class="form-group-wrapper">
+            <!-- Title Input Field -->
+            <div class="form-field">
+                <label for="title" class="form-label">Task Title <span style="color: var(--primary-color);">*</span></label>
+                <input 
+                    type="text" 
+                    id="title" 
+                    name="title" 
+                    placeholder="e.g., Complete Flask Tutorial" 
+                    required 
+                    class="form-input"
+                >
+            </div>
+
+            <!-- Description Input Field -->
+            <div class="form-field">
+                <label for="description" class="form-label">Description</label>
+                <textarea 
+                    id="description" 
+                    name="description" 
+                    placeholder="Describe task objectives..." 
+                    rows="4" 
+                    class="form-input"
+                    style="resize: vertical; font-family: inherit;"
+                ></textarea>
+            </div>
+
+            <!-- Priority Select Box -->
+            <div class="form-field">
+                <label for="priority" class="form-label">Priority Level</label>
+                <!-- Select element gives drop down select inputs -->
+                <select id="priority" name="priority" class="form-input">
+                    <option value="Low">Low</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="High">High</option>
+                </select>
+            </div>
+
+            <!-- Due Date Field -->
+            <div class="form-field">
+                <label for="dueDate" class="form-label">Due Date</label>
+                <!-- type="date" displays standard HTML5 calendar controls -->
+                <input 
+                    type="date" 
+                    id="dueDate" 
+                    name="dueDate" 
+                    class="form-input"
+                >
+            </div>
+
+            <!-- Action Buttons Row -->
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button type="submit" class="btn btn-primary btn-block" style="flex: 2;">Save Task</button>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary" style="flex: 1; padding: 0.8rem 0;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

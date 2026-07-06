@@ -1,0 +1,72 @@
+<!-- Extends base.html tells Jinja2 to inherit the structure from our base template -->
+{% extends "base.html" %}
+
+<!-- Set a dynamic title for this specific page -->
+{% block title %}TaskFlow - Edit Task{% endblock %}
+
+{% block content %}
+<div class="form-container-wrapper">
+    <!-- Card box layout pre-filled with the current task details -->
+    <div class="form-card">
+        <h2 class="form-title">Edit Task</h2>
+        <p class="form-subtitle">Modify task objectives below</p>
+        
+        <!-- Form action posts values to the edit_task route with the task's id parameter -->
+        <form action="{{ url_for('edit_task', id=task.id) }}" method="POST" class="form-group-wrapper">
+            <!-- Title Input Field -->
+            <div class="form-field">
+                <label for="title" class="form-label">Task Title <span style="color: var(--primary-color);">*</span></label>
+                <input 
+                    type="text" 
+                    id="title" 
+                    name="title" 
+                    value="{{ task.title }}" 
+                    required 
+                    class="form-input"
+                >
+            </div>
+
+            <!-- Description Input Field -->
+            <div class="form-field">
+                <label for="description" class="form-label">Description</label>
+                <textarea 
+                    id="description" 
+                    name="description" 
+                    rows="4" 
+                    class="form-input"
+                    style="resize: vertical; font-family: inherit;"
+                >{{ task.description }}</textarea>
+            </div>
+
+            <!-- Priority Select Box -->
+            <div class="form-field">
+                <label for="priority" class="form-label">Priority Level</label>
+                <select id="priority" name="priority" class="form-input">
+                    <!-- Jinja conditional checks the current priority and adds the 'selected' attribute accordingly -->
+                    <option value="Low" {% if task.priority == 'Low' %}selected{% endif %}>Low</option>
+                    <option value="Medium" {% if task.priority == 'Medium' %}selected{% endif %}>Medium</option>
+                    <option value="High" {% if task.priority == 'High' %}selected{% endif %}>High</option>
+                </select>
+            </div>
+
+            <!-- Due Date Field -->
+            <div class="form-field">
+                <label for="dueDate" class="form-label">Due Date</label>
+                <input 
+                    type="date" 
+                    id="dueDate" 
+                    name="dueDate" 
+                    value="{{ task.due_date }}" 
+                    class="form-input"
+                >
+            </div>
+
+            <!-- Action Buttons Row -->
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button type="submit" class="btn btn-primary btn-block" style="flex: 2;">Save Changes</button>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary" style="flex: 1; padding: 0.8rem 0;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+<!-- Extends base.html tells Jinja2 to inherit the structure from our base template -->
+{% extends "base.html" %}
+
+<!-- Set a dynamic title for this specific page -->
+{% block title %}TaskFlow - Organize Your Tasks{% endblock %}
+
+<!-- Inject our Home page content into the content block of base.html -->
+{% block content %}
+<section class="hero-section">
+    <!-- Hero Container holds our main landing content -->
+    <div class="hero-container">
+        <!-- Hero badge to draw interest -->
+        <span class="hero-badge">Welcome to TaskFlow</span>
+        
+        <!-- Main Heading requested by the user -->
+        <h1 class="hero-title">Task Management Application</h1>
+        
+        <!-- Subtitle describing the app's purpose -->
+        <p class="hero-subtitle">
+            Stay organized, manage your daily tasks, and boost your productivity.
+        </p>
+        
+        <!-- CTA (Call To Action) Buttons -->
+        <div class="hero-actions">
+            <!-- Redirects user to the login route -->
+            <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+            
+            <!-- Redirects user to the register route -->
+            <a href="{{ url_for('register') }}" class="btn btn-secondary">Register</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}TaskFlow - Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container" style="width: 100%;">
+    
+    <!-- Dashboard Header -->
+    <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 class="hero-title" style="text-align: left; font-size: 2.25rem; margin-bottom: 0.25rem;">Dashboard</h1>
+            <p style="color: var(--text-muted);">Welcome, <strong>{{ session.get('fullname') }}</strong> ({{ session.get('username') }})</p>
+        </div>
+        <!-- Add Task Link button -->
+        <a href="{{ url_for('add_task') }}" class="btn btn-primary">+ Add New Task</a>
+    </div>
+
+    <!-- 1. Statistics Cards Grid (Now contains 4 cards with icons) -->
+    <div class="stats-grid">
+        <!-- Card 1: Total Tasks -->
+        <div class="stat-card">
+            <div class="stat-icon-wrapper" style="color: var(--primary-color);">📋</div>
+            <div class="stat-card-content">
+                <h3 class="stat-title">Total Tasks</h3>
+                <p class="stat-value">{{ total_tasks }}</p>
+            </div>
+            <div class="stat-indicator" style="background-color: var(--primary-color);"></div>
+        </div>
+
+        <!-- Card 2: Pending Tasks -->
+        <div class="stat-card">
+            <div class="stat-icon-wrapper" style="color: #3b82f6;">⏳</div>
+            <div class="stat-card-content">
+                <h3 class="stat-title">Pending</h3>
+                <p class="stat-value">{{ pending_tasks }}</p>
+            </div>
+            <div class="stat-indicator" style="background-color: #3b82f6;"></div>
+        </div>
+
+        <!-- Card 3: Completed Tasks -->
+        <div class="stat-card">
+            <div class="stat-icon-wrapper" style="color: #22c55e;">✅</div>
+            <div class="stat-card-content">
+                <h3 class="stat-title">Completed</h3>
+                <p class="stat-value">{{ completed_tasks }}</p>
+            </div>
+            <div class="stat-indicator" style="background-color: #22c55e;"></div>
+        </div>
+
+        <!-- Card 4: High Priority Tasks (New!) -->
+        <div class="stat-card">
+            <div class="stat-icon-wrapper" style="color: #ef4444;">🔥</div>
+            <div class="stat-card-content">
+                <h3 class="stat-title">High Priority</h3>
+                <p class="stat-value">{{ high_priority_tasks }}</p>
+            </div>
+            <div class="stat-indicator" style="background-color: #ef4444;"></div>
+        </div>
+    </div>
+
+    <!-- 2. Search, Filters, and Sorting Control Bar -->
+    <div class="filter-section-wrapper">
+        <form method="GET" action="{{ url_for('dashboard') }}" class="filter-form">
+            <!-- Search text input row -->
+            <div class="filter-search-row">
+                <input 
+                    type="text" 
+                    name="search" 
+                    placeholder="Search tasks by title or description..." 
+                    value="{{ search }}" 
+                    class="form-input search-input"
+                >
+            </div>
+            
+            <!-- Filters & Sorting row -->
+            <div class="filter-controls-row">
+                <!-- Status Filter Dropdown -->
+                <div class="filter-control-item">
+                    <label for="status" class="filter-label">Status</label>
+                    <select name="status" id="status" class="form-input filter-select">
+                        <option value="All" {% if status == 'All' %}selected{% endif %}>All Statuses</option>
+                        <option value="Pending" {% if status == 'Pending' %}selected{% endif %}>Pending</option>
+                        <option value="Completed" {% if status == 'Completed' %}selected{% endif %}>Completed</option>
+                    </select>
+                </div>
+
+                <!-- Priority Filter Dropdown -->
+                <div class="filter-control-item">
+                    <label for="priority" class="filter-label">Priority</label>
+                    <select name="priority" id="priority" class="form-input filter-select">
+                        <option value="All" {% if priority == 'All' %}selected{% endif %}>All Priorities</option>
+                        <option value="High" {% if priority == 'High' %}selected{% endif %}>High</option>
+                        <option value="Medium" {% if priority == 'Medium' %}selected{% endif %}>Medium</option>
+                        <option value="Low" {% if priority == 'Low' %}selected{% endif %}>Low</option>
+                    </select>
+                </div>
+
+                <!-- Sorting Dropdown -->
+                <div class="filter-control-item">
+                    <label for="sort" class="filter-label">Sort By</label>
+                    <select name="sort" id="sort" class="form-input filter-select">
+                        <option value="due_date_desc" {% if sort == 'due_date_desc' %}selected{% endif %}>Due Date (Newest First)</option>
+                        <option value="due_date_asc" {% if sort == 'due_date_asc' %}selected{% endif %}>Due Date (Oldest First)</option>
+                        <option value="priority" {% if sort == 'priority' %}selected{% endif %}>Priority (High-Low)</option>
+                        <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Date Created</option>
+                    </select>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="filter-actions-item">
+                    <button type="submit" class="btn btn-primary btn-filter">Apply Filters</button>
+                    <!-- If search or filter is active, display a 'Clear' button -->
+                    {% if search or status != 'All' or priority != 'All' or sort != 'due_date_desc' %}
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-clear">Clear</a>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- 3. Task Cards List -->
+    {% if not tasks %}
+        <!-- If the user has NO tasks overall -->
+        {% if not search and status == 'All' and priority == 'All' %}
+            <div class="empty-state-card">
+                <div class="empty-illustration">📋</div>
+                <h3 class="empty-title">No tasks yet.</h3>
+                <p class="empty-subtitle">
+                    Get started by creating your first task today and boost your productivity!
+                </p>
+                <a href="{{ url_for('add_task') }}" class="btn btn-primary">Create Your First Task</a>
+            </div>
+        {% else %}
+            <!-- If search or filters yielded NO tasks -->
+            <div class="empty-state-card">
+                <div class="empty-illustration">🔍</div>
+                <h3 class="empty-title">No matching tasks found.</h3>
+                <p class="empty-subtitle">
+                    Try adjusting your filters, clearing your search query, or add a new task.
+                </p>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Clear Filters</a>
+            </div>
+        {% endif %}
+    {% else %}
+        <!-- Tasks Grid containing responsive task card modules -->
+        <div class="tasks-grid">
+            {% for task in tasks %}
+                <!-- Single Task Card -->
+                <div class="task-card">
+                    <!-- Task Header Row (Title and Badges) -->
+                    <div class="task-card-header">
+                        <h3 class="task-title-text">{{ task.title }}</h3>
+                        
+                        <!-- Badges Container -->
+                        <div class="badge-group">
+                            <!-- Priority Badge -->
+                            <span class="badge badge-priority-{{ task.priority.lower() }}">
+                                {{ task.priority }}
+                            </span>
+                            
+                            <!-- Status Badge -->
+                            <span class="badge badge-status-{{ task.status.lower() }}">
+                                {{ task.status }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Task Description text block -->
+                    <div class="task-card-body">
+                        <p class="task-desc">
+                            {% if task.description %}
+                                {{ task.description }}
+                            {% else %}
+                                <em style="color: #94a3b8;">No description provided.</em>
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <!-- Task details footer metadata (due date) -->
+                    <div class="task-card-footer">
+                        <div class="task-due">
+                            <span class="due-icon">📅</span> 
+                            <span>
+                                {% if task.due_date %}
+                                    Due: {{ task.due_date }}
+                                {% else %}
+                                    No Due Date
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <!-- Action Buttons Container -->
+                        <div class="task-actions">
+                            <!-- If the task is pending, display Mark Complete button -->
+                            {% if task.status == 'Pending' %}
+                                <a href="{{ url_for('complete_task', id=task.id) }}" 
+                                   class="btn-action btn-action-complete" 
+                                   title="Mark as Complete"
+                                >
+                                    ✓ Complete
+                                </a>
+                            {% endif %}
+                            
+                            <!-- Edit Button -->
+                            <a href="{{ url_for('edit_task', id=task.id) }}" 
+                               class="btn-action btn-action-edit" 
+                               title="Edit Task"
+                            >
+                                ✎ Edit
+                            </a>
+                            
+                            <!-- Delete Button with JavaScript confirmation query -->
+                            <a href="{{ url_for('delete_task', id=task.id) }}" 
+                               class="btn-action btn-action-delete" 
+                               onclick="return confirm('Are you sure you want to delete this task?');"
+                               title="Delete Task"
+                            >
+                                🗑 Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
