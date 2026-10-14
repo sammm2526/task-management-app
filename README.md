@@ -147,32 +147,6 @@ http://127.0.0.1:5000
 
 ---
 
-## 📸 Screenshots
-
-You can add screenshots here after uploading them to your repository.
-
-### 🏠 Home Page
-
-*(Add screenshot here)*
-
-### 🔑 Login Page
-
-*(Add screenshot here)*
-
-### 📝 Registration Page
-
-*(Add screenshot here)*
-
-### 📋 Dashboard
-
-*(Add screenshot here)*
-
-### ➕ Add Task
-
-*(Add screenshot here)*
-
----
-
 ## 🌟 Future Enhancements
 
 - Email Verification
@@ -189,7 +163,7 @@ You can add screenshots here after uploading them to your repository.
 
 ## 👩‍💻 Author
 
-**Samiksha**
+**Samiksha K S**
 
 GitHub: https://github.com/sammm2526
 
